@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER MODEL
+// Stores user authentication and profile data
+// ============================================
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  avatar    String?
+  role      String   @default("USER") // USER, ADMIN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  projects         Project[]
+  tasks            Task[]
+  assignedTasks    Task[]    @relation("AssignedTasks")
+  comments         Comment[]
+  
+  @@map("users")
+}
+
+// ============================================
+// PROJECT MODEL
+// Organizes tasks into logical groupings
+// ============================================
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  color       String   @default("#6366f1")
+  icon        String   @default("folder")
+  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED, COMPLETED, ON_HOLD
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+
+  @@map("projects")
+}
+
+// ============================================
+// TASK MODEL
+// Core entity for task management
+// ============================================
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  status      String    @default("TODO") // TODO, IN_PROGRESS, IN_REVIEW, COMPLETED
+  priority    String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  dueDate     DateTime?
+  completedAt DateTime?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  projectId  String?
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creatorId  String
+  creator    User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  assigneeId String?
+  assignee   User?     @relation("AssignedTasks", fields: [assigneeId], references: [id], onDelete: SetNull)
+  comments   Comment[]
+  tags       Tag[]
+
+  @@map("tasks")
+}
+
+// ============================================
+// COMMENT MODEL
+// Task comments and discussions
+// ============================================
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  taskId   String
+  task     Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+// ============================================
+// TAG MODEL
+// Labels for categorizing tasks
+// ============================================
+model Tag {
+  id    String @id @default(uuid())
+  name  String @unique
+  color String @default("#6366f1")
+  tasks Task[]
+
+  @@map("tags")
+}
+
+// ============================================
+// NOTE: SQLite doesn't support enums
+// Use these string values in your code:
+// 
+// Role: "USER", "ADMIN"
+// ProjectStatus: "ACTIVE", "ARCHIVED", "COMPLETED", "ON_HOLD"
+// TaskStatus: "TODO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED"
+// Priority: "LOW", "MEDIUM", "HIGH", "URGENT"
+// ============================================

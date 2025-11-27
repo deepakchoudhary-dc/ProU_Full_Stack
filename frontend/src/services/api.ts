@@ -3,6 +3,7 @@
  */
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '../stores/authStore';
 
 // Create axios instance
 const api = axios.create({
@@ -33,13 +34,7 @@ api.interceptors.response.use(
   (error: AxiosError) => {
     // Handle 401 - unauthorized
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
-      // Redirect to login if not already there
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
+      useAuthStore.getState().logout();
     }
 
     return Promise.reject(error);

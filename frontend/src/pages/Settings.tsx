@@ -21,12 +21,12 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
-import { userService } from '../services/user';
 import { authService } from '../services/auth';
 import { Card, Button, Input } from '../components/ui';
 
 interface ProfileForm {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 
@@ -48,7 +48,8 @@ const Settings = () => {
     formState: { errors: profileErrors },
   } = useForm<ProfileForm>({
     defaultValues: {
-      name: user?.name || '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
       email: user?.email || '',
     },
   });
@@ -64,7 +65,7 @@ const Settings = () => {
   const newPassword = watch('newPassword');
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data: ProfileForm) => userService.updateProfile(data),
+    mutationFn: (data: ProfileForm) => authService.updateProfile(data),
     onSuccess: (response) => {
       setAuth(response.data, localStorage.getItem('token') || '');
       setSuccessMessage('Profile updated successfully');
@@ -74,7 +75,7 @@ const Settings = () => {
 
   const changePasswordMutation = useMutation({
     mutationFn: (data: { currentPassword: string; newPassword: string }) =>
-      authService.changePassword(data),
+      authService.changePassword(data.currentPassword, data.newPassword),
     onSuccess: () => {
       resetPassword();
       setSuccessMessage('Password changed successfully');
@@ -152,25 +153,33 @@ const Settings = () => {
               <div className="flex items-center gap-4 mb-6">
                 <div className="relative">
                   <div className="h-20 w-20 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center text-white text-2xl font-bold">
-                    {user?.name?.charAt(0).toUpperCase()}
+                    {user?.firstName?.charAt(0).toUpperCase()}
                   </div>
                   <button className="absolute bottom-0 right-0 p-1.5 rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <Camera className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                   </button>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">{user?.name}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{user?.firstName} {user?.lastName}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
                 </div>
               </div>
 
               <form onSubmit={handleProfileSubmit((data) => updateProfileMutation.mutate(data))} className="space-y-4">
-                <Input
-                  label="Full Name"
-                  icon={<User className="h-5 w-5" />}
-                  error={profileErrors.name?.message}
-                  {...registerProfile('name', { required: 'Name is required' })}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="First Name"
+                    icon={<User className="h-5 w-5" />}
+                    error={profileErrors.firstName?.message}
+                    {...registerProfile('firstName', { required: 'First name is required' })}
+                  />
+                  <Input
+                    label="Last Name"
+                    icon={<User className="h-5 w-5" />}
+                    error={profileErrors.lastName?.message}
+                    {...registerProfile('lastName', { required: 'Last name is required' })}
+                  />
+                </div>
                 <Input
                   label="Email Address"
                   type="email"

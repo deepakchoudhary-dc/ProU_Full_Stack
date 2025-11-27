@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { taskService } from '../services/task';
 import { Card, Button } from '../components/ui';
 import type { Task } from '../types';
@@ -18,17 +18,17 @@ const Kanban = () => {
     }
   }, [data]);
 
-  const reorderMutation = useMutation({
-    mutationFn: (payload: { projectId: string; tasks: Array<{ id: string; order: number; status?: string }> }) =>
-      taskService.reorderTasks(payload.projectId, payload.tasks),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-    },
-  });
+  // const reorderMutation = useMutation({
+  //   mutationFn: (payload: { projectId: string; tasks: Array<{ id: string; order: number; status?: string }> }) =>
+  //     taskService.reorderTasks(payload.projectId, payload.tasks),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['tasks'] });
+  //   },
+  // });
 
-  const onDragEnd = (_event: any) => {
-    // Drag & drop is scaffolded in UI; install dnd-kit to enable interactive reordering.
-  };
+  // const onDragEnd = (_event: any) => {
+  //   // Drag & drop is scaffolded in UI; install dnd-kit to enable interactive reordering.
+  // };
 
   return (
     <div className="space-y-6">

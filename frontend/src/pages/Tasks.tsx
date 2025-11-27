@@ -13,9 +13,7 @@ import {
   CheckSquare,
   Calendar,
   FolderKanban,
-  Clock,
   AlertCircle,
-  MoreHorizontal,
   Edit,
   Trash2,
   Check,
@@ -27,7 +25,7 @@ import type { Task, TaskStatus, Priority } from '../types';
 
 const Tasks = () => {
   const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const [statusFilter, setStatusFilter] = useState<TaskStatus | 'ALL'>(
@@ -52,11 +50,6 @@ const Tasks = () => {
       status: statusFilter !== 'ALL' ? statusFilter : undefined,
       priority: priorityFilter !== 'ALL' ? priorityFilter : undefined,
     }),
-  });
-
-  const { data: projectsData } = useQuery({
-    queryKey: ['projects'],
-    queryFn: () => projectService.getProjects({}),
   });
 
   const deleteMutation = useMutation({
@@ -146,7 +139,7 @@ const Tasks = () => {
             Tasks
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            {tasksData?.data?.total || 0} total tasks
+            {tasksData?.meta?.total || 0} total tasks
           </p>
         </div>
         <Link to="/tasks/new">

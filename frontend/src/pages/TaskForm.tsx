@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -58,7 +58,6 @@ const TaskForm = () => {
   const {
     register,
     handleSubmit,
-    control,
     reset,
     watch,
     setValue,

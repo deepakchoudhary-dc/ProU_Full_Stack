@@ -165,6 +165,7 @@ export interface DashboardStats {
   dueThisWeek: number;
   completionRate: number;
   completedThisWeek: number;
+  upcomingTasks?: Task[];
 }
 
 export interface RecentActivity {

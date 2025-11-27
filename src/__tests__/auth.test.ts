@@ -7,23 +7,29 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 // Mock Prisma
-jest.mock('../../config/database', () => ({
-  user: {
-    findUnique: jest.fn(),
-    create: jest.fn(),
+jest.mock('../config/database', () => ({
+  __esModule: true,
+  default: {
+    user: {
+      findUnique: jest.fn(),
+      create: jest.fn(),
+    },
   },
 }));
 
-import prisma from '../../config/database';
+import prisma from '../config/database';
 
 // Mock config
-jest.mock('../../config', () => ({
-  jwt: {
-    secret: 'test-secret',
-    expiresIn: '1h',
-  },
-  password: {
-    saltRounds: 10,
+jest.mock('../config', () => ({
+  __esModule: true,
+  default: {
+    jwt: {
+      secret: 'test-secret',
+      expiresIn: '1h',
+    },
+    password: {
+      saltRounds: 10,
+    },
   },
 }));
 

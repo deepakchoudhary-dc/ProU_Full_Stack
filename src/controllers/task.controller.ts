@@ -30,7 +30,7 @@ const checkTaskAccess = async (taskId: string, userId: string, userRole: string)
   const hasAccess = 
     task.creatorId === userId || 
     task.assigneeId === userId || 
-    task.project.ownerId === userId ||
+    (task.project && task.project.ownerId === userId) ||
     userRole === 'ADMIN';
 
   if (!hasAccess) {
@@ -209,7 +209,7 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
   const hasAccess = 
     task.creatorId === req.user!.id || 
     task.assigneeId === req.user!.id || 
-    task.project.ownerId === req.user!.id ||
+    (task.project && task.project.ownerId === req.user!.id) ||
     req.user!.role === 'ADMIN';
 
   if (!hasAccess) {
@@ -460,7 +460,7 @@ export const deleteComment = asyncHandler(async (req: Request, res: Response) =>
   const canDelete = 
     comment.authorId === req.user!.id ||
     comment.task.creatorId === req.user!.id ||
-    comment.task.project.ownerId === req.user!.id ||
+    (comment.task.project && comment.task.project.ownerId === req.user!.id) ||
     req.user!.role === 'ADMIN';
 
   if (!canDelete) {

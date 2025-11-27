@@ -18,8 +18,8 @@ import { ConflictError, UnauthorizedError, NotFoundError } from '../utils/errors
 const generateToken = (userId: string, email: string, role: string): string => {
   return jwt.sign(
     { userId, email, role },
-    config.jwt.secret,
-    { expiresIn: config.jwt.expiresIn }
+    config.jwt.secret as jwt.Secret,
+    { expiresIn: config.jwt.expiresIn as jwt.SignOptions['expiresIn'] }
   );
 };
 

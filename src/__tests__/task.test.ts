@@ -21,7 +21,7 @@ describe('Task Controller', () => {
         { from: 'IN_PROGRESS', to: 'IN_REVIEW' },
         { from: 'IN_REVIEW', to: 'COMPLETED' },
         { from: 'COMPLETED', to: 'TODO' }, // Reopening is allowed
-      ];
+      ] as const;
 
       transitions.forEach(({ from, to }) => {
         expect(validStatuses.includes(from)).toBe(true);

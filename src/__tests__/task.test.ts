@@ -88,7 +88,7 @@ describe('Task Controller', () => {
     });
 
     it('should clear completedAt when status changes from COMPLETED', () => {
-      const status = 'IN_PROGRESS';
+      const status: string = 'IN_PROGRESS';
       const completedAt = status === 'COMPLETED' ? new Date() : null;
 
       expect(completedAt).toBeNull();
